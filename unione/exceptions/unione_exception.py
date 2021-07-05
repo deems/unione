@@ -1,0 +1,2 @@
+class UniOneException(Exception):
+    pass
