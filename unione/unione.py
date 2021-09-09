@@ -34,6 +34,19 @@ class UniOne:
                     **kwargs) -> dict:
         """
         sending a message to multiple recipients
+        recipients - [
+              {
+                "email": "user@example.com",
+                "substitutions": {
+                  "CustomerId": 12452,
+                  "to_name": "John Smith"
+                },
+                "metadata": {
+                  "campaign_id": "email61324",
+                  "customer_hash": "b253ac7"
+                }
+              }
+            ]
         :return:
         """
         if not body_html and not kwargs.get('template_id'):
