@@ -30,7 +30,7 @@ class UniOne:
 
         return self._request('email/send', params)
 
-    def send_emails(self, recipients: List[dict], from_email: str, from_name: str, subject: str, body_html: str = None,
+    def send_emails(self, recipients: List[dict], from_email: str, from_name: str, subject: str = None, body_html: str = None,
                     **kwargs) -> dict:
         """
         sending a message to multiple recipients
@@ -54,10 +54,11 @@ class UniOne:
 
         params = {
             'recipients': recipients,
-            'subject': subject,
             'from_email': from_email,
             'from_name': from_name
         }
+        if subject:
+            params['subject'] = subject
         if body_html:
             params['body'] = {
                 'html': body_html
