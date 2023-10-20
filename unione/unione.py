@@ -10,8 +10,11 @@ logger = logging.getLogger('unione')
 
 class UniOne:
     def __init__(self, api_key: str):
-        self._api_key = api_key
         self._api_url = 'https://eu1.unione.io/ru/transactional/api/v1/'
+
+        self._headers = {
+            'X-API-KEY': api_key
+        }
 
     def send_email(self, to_email: str, from_email: str, from_name: str, subject: str, body_html: str, **kwargs):
         params = {
@@ -30,7 +33,8 @@ class UniOne:
 
         return self._request('email/send', params)
 
-    def send_emails(self, recipients: List[dict], from_email: str, from_name: str, subject: str = None, body_html: str = None,
+    def send_emails(self, recipients: List[dict], from_email: str, from_name: str, subject: str = None,
+                    body_html: str = None,
                     **kwargs) -> dict:
         """
         sending a message to multiple recipients
@@ -69,12 +73,12 @@ class UniOne:
         return self._request('email/send', params)
 
     def _request(self, method: str, params: dict) -> dict:
-        headers = {
-            'X-API-KEY': self._api_key,
-            'Content-Type': 'application/json'
-        }
         data = {'message': params}
-        r = requests.post(f'{self._api_url}{method}.json', json=data, headers=headers)
+        try:
+            r = requests.post(f'{self._api_url}{method}.json', json=data, headers=self._headers, timeout=3)
+        except requests.exceptions.RequestException as e:
+            logger.exception(e)
+            raise UniOneException(f'request error {e}')
         if r.status_code != 200:
             logger.error(f'request error {r.status_code} {r.text}')
             raise UniOneException(f'request error')
